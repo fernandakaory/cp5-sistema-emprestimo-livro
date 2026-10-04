@@ -1,7 +1,6 @@
 # Sistema de Empréstimo de Livros
 
-Backend simples para gerenciamento de uma biblioteca universitária utilizando
-Python e MongoDB.
+Backend simples para gerenciamento de uma biblioteca universitária utilizando Python e MongoDB.
 
 ## Funcionalidades
 
@@ -46,23 +45,19 @@ cp5_sistema_emprestimo_livros/
 
 ### db.py
 
-Responsável pela conexão com o MongoDB e pela criação dos índices únicos de
-ISBN e matrícula.
+Responsável pela conexão com o MongoDB e pela criação dos índices únicos de ISBN e matrícula.
 
 ### service.py
 
-Contém as regras de negócio da biblioteca. A camada de serviço é responsável
-por validar disponibilidade, limite de empréstimos, atrasos, multas e
-restrições de exclusão.
+Contém as regras de negócio da biblioteca. A camada de serviço é responsável por validar disponibilidade, limite de empréstimos, atrasos, multas e restrições de exclusão.
 
 ### main.py
 
-Contém apenas a interface de terminal e chama os métodos da camada de serviço.
+Contém a interface de terminal e chama os métodos da camada de serviço.
 
 ### exceptions.py
 
-Contém exceções específicas do domínio, deixando os erros de negócio mais
-claros.
+Contém exceções específicas do domínio, deixando os erros de negócio mais claros.
 
 ## Decisões principais
 
@@ -74,9 +69,7 @@ Foram utilizadas três coleções:
 - `alunos`
 - `emprestimos`
 
-Os empréstimos armazenam ISBN e matrícula em vez de duplicar os dados completos
-do livro e do aluno. Quando um relatório precisa das informações relacionadas,
-é utilizado `$lookup`.
+Os empréstimos armazenam ISBN e matrícula em vez de duplicar os dados completos do livro e do aluno. Quando um relatório precisa das informações relacionadas, é utilizado `$lookup`.
 
 ### Índices únicos
 
@@ -89,8 +82,7 @@ Dessa forma, a própria camada de banco impede registros duplicados.
 
 ### Controle de estoque
 
-Ao realizar um empréstimo, o estoque é atualizado de forma atômica utilizando
-um filtro:
+Ao realizar um empréstimo, o estoque é atualizado de forma atômica utilizando um filtro:
 
 ```python
 {
@@ -105,13 +97,11 @@ junto de:
 {"$inc": {"exemplares_disponiveis": -1}}
 ```
 
-Assim, duas solicitações simultâneas não conseguem reduzir o estoque para um
-valor negativo.
+Assim, duas solicitações simultâneas não conseguem reduzir o estoque para um valor negativo.
 
 ### Data parametrizável
 
-Os métodos de empréstimo, devolução e relatório de atrasos aceitam
-`data_atual` como parâmetro.
+Os métodos de empréstimo, devolução e relatório de atrasos aceitam `data_atual` como parâmetro.
 
 Isso permite testar cenários de atraso sem precisar esperar vários dias.
 
@@ -127,10 +117,18 @@ multa = dias_de_atraso × R$ 2,00
 
 ### 1. Subir o MongoDB
 
-É necessário ter Docker instalado.
+É necessário ter o Docker Desktop instalado e em execução.
+
+Na raiz do projeto, execute:
 
 ```bash
 docker compose up -d
+```
+
+Para verificar se o container está ativo:
+
+```bash
+docker ps
 ```
 
 O MongoDB ficará disponível em:
@@ -139,7 +137,7 @@ O MongoDB ficará disponível em:
 mongodb://localhost:27017
 ```
 
-### 2. Criar ambiente virtual
+### 2. Criar o ambiente virtual
 
 Mac/Linux:
 
@@ -155,26 +153,51 @@ python -m venv .venv
 .venv\Scripts\activate
 ```
 
-### 3. Instalar dependências
+### 3. Instalar as dependências
+
+Mac/Linux:
 
 ```bash
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
+```
+
+Windows:
+
+```bash
+python -m pip install -r requirements.txt
 ```
 
 ### 4. Executar o sistema
 
-```bash
-python main.py
-```
+Como o código-fonte está dentro da pasta `src`, o sistema deve ser executado a partir da raiz do projeto.
 
-## Executar testes
+Mac/Linux:
 
 ```bash
-pytest -v
+python3 -m src.main
 ```
 
-Os testes utilizam `mongomock`, portanto não dependem do MongoDB do Docker para
-serem executados.
+Windows:
+
+```bash
+python -m src.main
+```
+
+## Executar os testes
+
+Mac/Linux:
+
+```bash
+python3 -m pytest -v
+```
+
+Windows:
+
+```bash
+python -m pytest -v
+```
+
+Os testes utilizam `mongomock`, portanto não dependem do MongoDB do Docker para serem executados.
 
 Há pelo menos um teste relacionado a cada requisito de R1 a R6.
 
@@ -190,13 +213,14 @@ O sistema possui exceções específicas como:
 - `LivroNaoEncontrado`
 - `AlunoNaoEncontrado`
 
-Isso separa erros esperados da regra de negócio de erros técnicos inesperados.  
+Isso separa erros esperados da regra de negócio de erros técnicos inesperados.
 
 ## Membros do Grupo
-| Nome                                | RM       |
-|-------------------------------------|----------|
-| 🍙 Fernanda Kaory Saito             | RM551104 |
-| ⚡ João Pedro Borsato Cruz          | RM550294 |
-| 💫 Maria Fernanda Vieira de Camargo | RM97956  |
-| 🚀 Pedro Lucas de Andrade Nunes     | RM550366 |
-| 💥 Vinícius Bernardino de Souza     | RM97888 |
+
+| Nome | RM |
+|---|---|
+| 🍙 Fernanda Kaory Saito | RM551104 |
+| ⚡ João Pedro Borsato Cruz | RM550294 |
+| 💫 Maria Fernanda Vieira de Camargo | RM97956 |
+| 🚀 Pedro Lucas de Andrade Nunes | RM550366 |
+| 💥 Vinícius Bernardino de Souza | RM97888 |
